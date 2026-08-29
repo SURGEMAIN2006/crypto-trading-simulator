@@ -1,0 +1,28 @@
+{
+  "trades": [
+    {
+      "id": "tx-1001",
+      "symbol": "BTC",
+      "side": "BUY",
+      "amount": 0.1,
+      "price": 65200,
+      "totalUSD": 6520,
+      "fee": 6.52,
+      "timestamp": "2026-08-13T12:16:30.784Z",
+      "txHash": "0x8f3c7a91b2e45f61d803acdf4e569a12b7e8d90f1a2b3c4d5e6f7a8b9c0d1e2f",
+      "status": "CONFIRMED"
+    }
+  ],
+  "blocks": [
+    {
+      "blockIndex": 104289,
+      "timestamp": "2026-08-13T12:16:30.784Z",
+      "hash": "0x8f3c7a91b2e45f61d803acdf4e569a12b7e8d90f1a2b3c4d5e6f7a8b9c0d1e2f",
+      "prevHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+      "transactionsCount": 1,
+      "validator": "Node-01 (Group 1 Ledger Engine)",
+      "gasUsed": "1,420,500 Gwei",
+      "status": "Confirmed"
+    }
+  ]
+}

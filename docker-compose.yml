@@ -1,0 +1,76 @@
+version: '3.8'
+
+services:
+  api-gateway:
+    build: ./gateway
+    container_name: crypto-api-gateway
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - USER_SERVICE_URL=http://user-service:3002
+      - MARKET_SERVICE_URL=http://market-service:3003
+      - MATCHING_SERVICE_URL=http://matching-service:3004
+      - TRANSACTION_SERVICE_URL=http://transaction-service:3005
+    depends_on:
+      - user-service
+      - market-service
+      - matching-service
+      - transaction-service
+    restart: always
+
+  user-service:
+    build: ./services/user-service
+    container_name: crypto-user-service
+    ports:
+      - "3002:3002"
+    environment:
+      - PORT=3002
+      - JWT_SECRET=secret_group1_key
+    volumes:
+      - user-db-data:/app
+    restart: always
+
+  market-service:
+    build: ./services/market-service
+    container_name: crypto-market-service
+    ports:
+      - "3003:3003"
+    environment:
+      - PORT=3003
+    volumes:
+      - market-db-data:/app
+    restart: always
+
+  matching-service:
+    build: ./services/matching-service
+    container_name: crypto-matching-service
+    ports:
+      - "3004:3004"
+    environment:
+      - PORT=3004
+      - USER_SERVICE_URL=http://user-service:3002
+      - TRANSACTION_SERVICE_URL=http://transaction-service:3005
+    depends_on:
+      - user-service
+      - transaction-service
+    volumes:
+      - matching-db-data:/app
+    restart: always
+
+  transaction-service:
+    build: ./services/transaction-service
+    container_name: crypto-transaction-service
+    ports:
+      - "3005:3005"
+    environment:
+      - PORT=3005
+    volumes:
+      - tx-db-data:/app
+    restart: always
+
+volumes:
+  user-db-data:
+  market-db-data:
+  matching-db-data:
+  tx-db-data:

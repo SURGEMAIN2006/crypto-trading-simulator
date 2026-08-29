@@ -1,0 +1,28 @@
+{
+  "users": [
+    {
+      "id": "u-101",
+      "email": "student@group1.com",
+      "name": "Group 1 Student Trader",
+      "passwordHash": "126aee8f817e5317abdc2ec7665d817b4e632c811c3568c24d9fc7596f56fad0",
+      "usdtBalance": 10000,
+      "initialBalance": 10000,
+      "holdings": {
+        "BTC": 0.1,
+        "ETH": 1,
+        "SOL": 2.5
+      }
+    },
+    {
+      "id": "u-1786630667920",
+      "email": "vadapav@Gmail.com",
+      "name": "Group 1 Student",
+      "passwordHash": "126aee8f817e5317abdc2ec7665d817b4e632c811c3568c24d9fc7596f56fad0",
+      "usdtBalance": 10000,
+      "initialBalance": 10000,
+      "holdings": {
+        "BTC": 0.1
+      }
+    }
+  ]
+}

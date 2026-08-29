@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Crypto Trading Simulator | 4 Microservices & API Gateway App</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- React 18, ReactDOM & Babel -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <style>
+    :root {
+      --bg-primary: #07090e;
+      --bg-card: rgba(18, 24, 38, 0.85);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --accent-green: #00e676;
+      --accent-red: #ff1744;
+      --accent-cyan: #00e5ff;
+      --accent-purple: #a855f7;
+      --accent-gold: #ffd700;
+      --font-sans: 'Inter', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(0, 229, 255, 0.06) 0%, transparent 40%),
+        radial-gradient(circle at 85% 85%, rgba(168, 85, 247, 0.06) 0%, transparent 40%);
+    }
+
+    .mono { font-family: var(--font-mono); }
+
+    .glass-panel {
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.2rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      outline: none;
+    }
+
+    .btn-primary { background: linear-gradient(135deg, #00e5ff 0%, #0088ff 100%); color: #000; }
+    .btn-buy { background: linear-gradient(135deg, #00e676 0%, #00b0ff 100%); color: #05190e; }
+    .btn-sell { background: linear-gradient(135deg, #ff1744 0%, #ff5252 100%); color: #fff; }
+    .btn-secondary { background: rgba(255, 255, 255, 0.05); color: var(--text-primary); border-color: var(--border-color); }
+    .btn-sm { padding: 0.35rem 0.75rem; font-size: 0.75rem; }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 12px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .badge-purple { background: rgba(168, 85, 247, 0.15); color: var(--accent-purple); border: 1px solid rgba(168, 85, 247, 0.3); }
+    .badge-green { background: rgba(0, 230, 118, 0.12); color: var(--accent-green); border: 1px solid rgba(0, 230, 118, 0.3); }
+    .badge-red { background: rgba(255, 23, 68, 0.12); color: var(--accent-red); border: 1px solid rgba(255, 23, 68, 0.3); }
+    .badge-gold { background: rgba(255, 215, 0, 0.15); color: var(--accent-gold); border: 1px solid rgba(255, 215, 0, 0.3); }
+
+    .pulse { animation: pulse 2s infinite ease-in-out; }
+    @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
+
+    .app-container { max-width: 1600px; margin: 0 auto; padding: 1.25rem; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+    const API_GATEWAY = 'http://localhost:3000/api';
+
+    function App() {
+      const [activeTab, setActiveTab] = useState('trade');
+      const [assets, setAssets] = useState([]);
+      const [selectedAsset, setSelectedAsset] = useState(null);
+      
+      const [userPortfolio, setUserPortfolio] = useState({
+        usdtBalance: 10000,
+        holdings: { BTC: 0.1, ETH: 1.0 },
+        totalPortfolioUSD: 10000
+      });
+
+      const [trades, setTrades] = useState([]);
+      const [blocks, setBlocks] = useState([]);
+      const [analyticsData, setAnalyticsData] = useState(null);
+      const [orderBook, setOrderBook] = useState({ bids: [], asks: [] });
+      
+      const [orderSide, setOrderSide] = useState('BUY');
+      const [amount, setAmount] = useState('0.1');
+
+      // User Authentication State
+      const [token, setToken] = useState(localStorage.getItem('jwt_token') || '');
+      const [authModalOpen, setAuthModalOpen] = useState(!localStorage.getItem('jwt_token'));
+      const [email, setEmail] = useState('student@group1.com');
+      const [password, setPassword] = useState('password123');
+
+      // Fetch Live Market Data via API Gateway (Microservice 2)
+      const fetchMarketData = async () => {
+        try {
+          const res = await fetch(`${API_GATEWAY}/market/live`);
+          const data = await res.json();
+          if (data.success) {
+            setAssets(data.assets);
+            if (!selectedAsset) setSelectedAsset(data.assets[0]);
+          }
+        } catch (e) {}
+      };
+
+      // Fetch User Portfolio via API Gateway (Microservice 1)
+      const fetchPortfolio = async () => {
+        try {
+          const res = await fetch(`${API_GATEWAY}/user/portfolio`);
+          const data = await res.json();
+          if (data.success && data.user) {
+            setUserPortfolio(data.user);
+          }
+        } catch (e) {}
+      };
+
+      // Fetch Order Book Depth via API Gateway (Microservice 3)
+      const fetchOrderBook = async () => {
+        try {
+          const sym = selectedAsset ? selectedAsset.symbol : 'BTC';
+          const res = await fetch(`${API_GATEWAY}/orders/book?symbol=${sym}`);
+          const data = await res.json();
+          if (data.success && data.book) {
+            setOrderBook(data.book);
+          }
+        } catch (e) {}
+      };
+
+      // Fetch Transactions & Blockchain Ledger via API Gateway (Microservice 4)
+      const fetchTransactions = async () => {
+        try {
+          const res = await fetch(`${API_GATEWAY}/transactions`);
+          const data = await res.json();
+          if (data.success) {
+            setTrades(data.trades);
+            setBlocks(data.blocks);
+          }
+        } catch (e) {}
+      };
+
+      // Fetch Data Science Analytics via API Gateway (Microservice 2)
+      const fetchAnalytics = async () => {
+        try {
+          const res = await fetch(`${API_GATEWAY}/analytics/ds`);
+          const data = await res.json();
+          if (data.success) {
+            setAnalyticsData(data);
+          }
+        } catch (e) {}
+      };
+
+      useEffect(() => {
+        fetchMarketData();
+        fetchPortfolio();
+        fetchOrderBook();
+        fetchTransactions();
+        fetchAnalytics();
+
+        const interval = setInterval(() => {
+          fetchMarketData();
+          fetchPortfolio();
+          fetchOrderBook();
+          fetchTransactions();
+          fetchAnalytics();
+        }, 3000);
+
+        return () => clearInterval(interval);
+      }, [selectedAsset]);
+
+      // Authentication Handler
+      const handleAuth = async (e, type) => {
+        e.preventDefault();
+        try {
+          const endpoint = type === 'login' ? '/auth/login' : '/auth/register';
+          const res = await fetch(`${API_GATEWAY}${endpoint}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password, name: 'Group 1 Student' })
+          });
+          const data = await res.json();
+          if (data.success && data.token) {
+            setToken(data.token);
+            localStorage.setItem('jwt_token', data.token);
+            setAuthModalOpen(false);
+            alert(`Welcome ${data.user.name}! JWT Authentication Verified.`);
+            fetchPortfolio();
+          } else {
+            alert(data.message || 'Auth failed');
+          }
+        } catch (err) {
+          alert('Failed to connect to API Gateway on Port 3000');
+        }
+      };
+
+      // Execute Order via Microservice 3 + Microservice 4 + Microservice 1
+      const handleExecuteOrder = async (e) => {
+        e.preventDefault();
+        if (!selectedAsset) return;
+        const qty = parseFloat(amount);
+        if (!qty || qty <= 0) return alert('Enter valid quantity');
+
+        try {
+          // 1. Order Matching Engine (Microservice 3)
+          const matchRes = await fetch(`${API_GATEWAY}/orders/place`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              symbol: selectedAsset.symbol,
+              side: orderSide,
+              type: 'MARKET',
+              amount: qty,
+              price: selectedAsset.price
+            })
+          });
+          const matchData = await matchRes.json();
+
+          if (!matchData.success) return alert(matchData.message);
+
+          // 2. Transaction & Block Logging (Microservice 4)
+          const logRes = await fetch(`${API_GATEWAY}/transactions/log`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(matchData.order)
+          });
+          const logData = await logRes.json();
+
+          // 3. User Portfolio Update (Microservice 1)
+          const totalUSD = qty * selectedAsset.price;
+          const usdtDelta = orderSide === 'BUY' ? -totalUSD : totalUSD;
+          const qtyDelta = orderSide === 'BUY' ? qty : -qty;
+
+          await fetch(`${API_GATEWAY}/user/portfolio/update`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ usdtDelta, symbol: selectedAsset.symbol, qtyDelta })
+          });
+
+          alert(`✅ Order Executed & Matched by Engine (MS3)!\nTransaction Logged (MS4): ${logData.trade.txHash}\nBlock Mined (MS4): #${logData.block.blockIndex}`);
+          fetchPortfolio();
+          fetchTransactions();
+        } catch (err) {
+          alert('Error executing order through Microservices Gateway');
+        }
+      };
+
+      return (
+        <div>
+          {/* Header Bar */}
+          <header className="glass-panel" style={{ borderRadius: 0, padding: '0.8rem 1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+              <div style={{ width: 40, height: 40, borderRadius: 10, background: 'linear-gradient(135deg, #00e5ff 0%, #a855f7 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, color: '#000' }}>
+                CS
+              </div>
+              <div>
+                <h1 style={{ fontSize: '1.25rem', fontWeight: 800 }}>CRYPTO<span style={{ color: 'var(--accent-cyan)' }}>SIM</span></h1>
+                <span className="badge badge-purple">4 Microservices Architecture (Ports 3000-3005)</span>
+              </div>
+            </div>
+
+            <nav style={{ display: 'flex', gap: '0.4rem', background: 'rgba(0,0,0,0.4)', padding: '0.25rem', borderRadius: 10 }}>
+              {['trade', 'portfolio', 'orderbook', 'blockchain', 'analytics'].map(tab => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className="btn btn-sm"
+                  style={{
+                    background: activeTab === tab ? 'rgba(0,229,255,0.2)' : 'transparent',
+                    color: activeTab === tab ? 'var(--accent-cyan)' : 'var(--text-secondary)',
+                    border: activeTab === tab ? '1px solid rgba(0,229,255,0.4)' : '1px solid transparent'
+                  }}
+                >
+                  {tab.toUpperCase()}
+                </button>
+              ))}
+            </nav>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <div style={{ textAlign: 'right' }}>
+                <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>CASH BALANCE</div>
+                <div className="mono" style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--accent-green)' }}>
+                  ${(userPortfolio.usdtBalance || 10000).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                </div>
+              </div>
+
+              {token ? (
+                <button className="btn btn-secondary btn-sm" onClick={() => { localStorage.removeItem('jwt_token'); setToken(''); setAuthModalOpen(true); }}>
+                  Logout
+                </button>
+              ) : (
+                <button className="btn btn-primary btn-sm" onClick={() => setAuthModalOpen(true)}>
+                  Login / Register
+                </button>
+              )}
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', background: 'rgba(0,230,118,0.1)', padding: '0.4rem 0.8rem', borderRadius: 20, border: '1px solid var(--accent-green)' }}>
+                <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--accent-green)' }} className="pulse" />
+                <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--accent-green)' }}>
+                  API Gateway 3000 Active
+                </span>
+              </div>
+            </div>
+          </header>
+
+          {/* Microservices Cluster Status Pill */}
+          <div style={{ background: 'rgba(5, 8, 15, 0.95)', borderBottom: '1px solid var(--border-color)', padding: '0.4rem 1.5rem', fontSize: '0.75rem', display: 'flex', gap: '1.5rem', justifyContent: 'center' }}>
+            <span style={{ color: 'var(--accent-cyan)' }}>🌐 API Gateway: Port 3000</span>
+            <span style={{ color: 'var(--accent-green)' }}>👤 MS1 User Auth: Port 3002 (users.db)</span>
+            <span style={{ color: 'var(--accent-gold)' }}>📈 MS2 Market Analytics: Port 3003 (Binance)</span>
+            <span style={{ color: 'var(--accent-purple)' }}>⚡ MS3 Matching Engine: Port 3004</span>
+            <span style={{ color: 'var(--accent-cyan)' }}>🔗 MS4 Blockchain Ledger: Port 3005 (transactions.db)</span>
+          </div>
+
+          {/* Asset Ticker Tape */}
+          <div style={{ background: 'rgba(10,14,23,0.9)', borderBottom: '1px solid var(--border-color)', padding: '0.6rem 1.5rem', display: 'flex', gap: '1rem', overflowX: 'auto' }}>
+            {assets.map(a => (
+              <div
+                key={a.symbol}
+                onClick={() => setSelectedAsset(a)}
+                style={{
+                  padding: '0.4rem 0.9rem',
+                  background: selectedAsset && selectedAsset.symbol === a.symbol ? 'rgba(0,229,255,0.15)' : 'rgba(255,255,255,0.03)',
+                  border: selectedAsset && selectedAsset.symbol === a.symbol ? '1px solid var(--accent-cyan)' : '1px solid var(--border-color)',
+                  borderRadius: 8,
+                  cursor: 'pointer',
+                  minWidth: 150
+                }}
+              >
+                <div style={{ fontSize: '0.8rem', fontWeight: 700 }}>{a.symbol}/USDT</div>
+                <div className="mono" style={{ fontSize: '0.85rem', color: a.change24h >= 0 ? 'var(--accent-green)' : 'var(--accent-red)' }}>
+                  ${a.price} ({a.change24h >= 0 ? '+' : ''}{a.change24h}%)
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <main className="app-container">
+            {activeTab === 'trade' && selectedAsset && (
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: '1.25rem' }}>
+                <div className="glass-panel" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <h2>{selectedAsset.name} ({selectedAsset.symbol}/USDT)</h2>
+                    <div className="mono" style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--accent-cyan)' }}>
+                      ${selectedAsset.price}
+                    </div>
+                  </div>
+
+                  <div style={{ height: 320, background: 'rgba(0,0,0,0.5)', borderRadius: 12, padding: '1rem', border: '1px solid var(--border-color)', position: 'relative' }}>
+                    <svg viewBox="0 0 800 300" style={{ width: '100%', height: '100%' }}>
+                      <polyline
+                        fill="none"
+                        stroke="var(--accent-cyan)"
+                        strokeWidth="3"
+                        points="20,240 100,200 200,220 300,140 400,160 500,90 600,120 700,50 780,70"
+                      />
+                    </svg>
+                  </div>
+                </div>
+
+                <div className="glass-panel" style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.5rem' }}>
+                    <button className="btn" style={{ background: orderSide === 'BUY' ? 'var(--accent-green)' : 'transparent', color: orderSide === 'BUY' ? '#000' : '#fff' }} onClick={() => setOrderSide('BUY')}>BUY</button>
+                    <button className="btn" style={{ background: orderSide === 'SELL' ? 'var(--accent-red)' : 'transparent', color: orderSide === 'SELL' ? '#fff' : '#fff' }} onClick={() => setOrderSide('SELL')}>SELL</button>
+                  </div>
+
+                  <form onSubmit={handleExecuteOrder} style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+                    <div>
+                      <label style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Quantity ({selectedAsset.symbol}):</label>
+                      <input type="number" step="any" value={amount} onChange={e => setAmount(e.target.value)} className="mono" style={{ width: '100%', padding: '0.6rem', background: '#000', color: '#fff', border: '1px solid var(--border-color)', borderRadius: 6 }} />
+                    </div>
+
+                    <div style={{ background: 'rgba(0,0,0,0.3)', padding: '0.6rem', borderRadius: 6, fontSize: '0.75rem', display: 'flex', flexDirection: 'column', gap: '0.3rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span>Total Order Value:</span>
+                        <span className="mono">${((parseFloat(amount) || 0) * selectedAsset.price).toFixed(2)} USDT</span>
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <span>Available Cash:</span>
+                        <span className="mono" style={{ color: 'var(--accent-green)' }}>${(userPortfolio.usdtBalance || 0).toFixed(2)} USDT</span>
+                      </div>
+                    </div>
+
+                    <button type="submit" className={`btn ${orderSide === 'BUY' ? 'btn-buy' : 'btn-sell'}`} style={{ width: '100%', padding: '0.8rem' }}>
+                      SUBMIT TO MATCHING ENGINE (MS3)
+                    </button>
+                  </form>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'portfolio' && (
+              <div className="glass-panel" style={{ padding: '1.5rem' }}>
+                <h2>User Portfolios (Microservice 1 persistent storage)</h2>
+                <div style={{ marginTop: '1rem', display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' }}>
+                  <div style={{ background: 'rgba(0,0,0,0.3)', padding: '1rem', borderRadius: 10 }}>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>USDT CASH BALANCE</div>
+                    <div className="mono" style={{ fontSize: '1.6rem', fontWeight: 800, color: 'var(--accent-green)' }}>
+                      ${(userPortfolio.usdtBalance || 0).toFixed(2)}
+                    </div>
+                  </div>
+                  <div style={{ background: 'rgba(0,0,0,0.3)', padding: '1rem', borderRadius: 10 }}>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>ACTIVE HOLDINGS</div>
+                    <div className="mono" style={{ fontSize: '1.2rem', marginTop: '0.4rem' }}>
+                      {JSON.stringify(userPortfolio.holdings || {})}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'orderbook' && (
+              <div className="glass-panel" style={{ padding: '1.5rem' }}>
+                <h2>Order Book Depth Walls (Microservice 3 Engine)</h2>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', marginTop: '1rem' }}>
+                  <div>
+                    <h3 style={{ color: 'var(--accent-red)', marginBottom: '0.5rem' }}>ASKS (Sellers Queue)</h3>
+                    {orderBook.asks.map((a, i) => (
+                      <div key={i} className="mono" style={{ color: 'var(--accent-red)', padding: '0.3rem 0' }}>
+                        ${a.price} - {a.amount} BTC
+                      </div>
+                    ))}
+                  </div>
+                  <div>
+                    <h3 style={{ color: 'var(--accent-green)', marginBottom: '0.5rem' }}>BIDS (Buyers Queue)</h3>
+                    {orderBook.bids.map((b, i) => (
+                      <div key={i} className="mono" style={{ color: 'var(--accent-green)', padding: '0.3rem 0' }}>
+                        ${b.price} - {b.amount} BTC
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'blockchain' && (
+              <div className="glass-panel" style={{ padding: '1.5rem' }}>
+                <h2>Cryptographic SHA-256 Ledger (Microservice 4)</h2>
+                <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+                  {blocks.map(b => (
+                    <div key={b.blockIndex} style={{ background: 'rgba(0,0,0,0.4)', padding: '0.8rem', borderRadius: 8, border: '1px solid var(--border-color)' }}>
+                      <div className="mono" style={{ color: 'var(--accent-cyan)', fontWeight: 700 }}>
+                        Block #{b.blockIndex} - Hash: {b.hash}
+                      </div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>
+                        Validator: {b.validator} | Timestamp: {b.timestamp}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'analytics' && analyticsData && (
+              <div className="glass-panel" style={{ padding: '1.5rem' }}>
+                <h2>Data Science & Analytics (Microservice 2)</h2>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1rem', marginTop: '1rem' }}>
+                  <div style={{ background: 'rgba(0,0,0,0.3)', padding: '1rem', borderRadius: 10 }}>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>RSI (14 TICKS)</div>
+                    <div className="mono" style={{ fontSize: '1.5rem', color: 'var(--accent-cyan)', fontWeight: 800 }}>{analyticsData.rsi}</div>
+                  </div>
+
+                  <div style={{ background: 'rgba(0,0,0,0.3)', padding: '1rem', borderRadius: 10 }}>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>SMA-20 AVERAGE</div>
+                    <div className="mono" style={{ fontSize: '1.5rem', color: 'var(--accent-gold)', fontWeight: 800 }}>${analyticsData.ma20}</div>
+                  </div>
+
+                  <div style={{ background: 'rgba(0,0,0,0.3)', padding: '1rem', borderRadius: 10 }}>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>FEAR & GREED INDEX</div>
+                    <div className="mono" style={{ fontSize: '1.5rem', color: 'var(--accent-green)', fontWeight: 800 }}>
+                      {analyticsData.fearGreedIndex} ({analyticsData.fearGreedLabel})
+                    </div>
+                  </div>
+
+                  <div style={{ background: 'rgba(0,0,0,0.3)', padding: '1rem', borderRadius: 10 }}>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>VOLATILITY VARIANCE</div>
+                    <div className="mono" style={{ fontSize: '1.5rem', color: 'var(--accent-purple)', fontWeight: 800 }}>{analyticsData.volatilityVariancePct}%</div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </main>
+
+          {/* User Auth Modal */}
+          {authModalOpen && (
+            <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.85)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
+              <div className="glass-panel" style={{ width: 380, padding: '2rem' }}>
+                <h2 style={{ marginBottom: '0.5rem' }}>JWT User Login (MS1)</h2>
+                <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>
+                  Microservice 1 Authentication & Persistent SQLite/JSON Database
+                </p>
+                <form style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+                  <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email" style={{ padding: '0.6rem', background: '#000', color: '#fff', border: '1px solid var(--border-color)', borderRadius: 6 }} />
+                  <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Password" style={{ padding: '0.6rem', background: '#000', color: '#fff', border: '1px solid var(--border-color)', borderRadius: 6 }} />
+                  <button type="submit" className="btn btn-primary" onClick={e => handleAuth(e, 'login')}>Login to Account</button>
+                  <button type="button" className="btn btn-secondary" onClick={e => handleAuth(e, 'register')}>Create New Account</button>
+                </form>
+              </div>
+            </div>
+          )}
+
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
+</html>

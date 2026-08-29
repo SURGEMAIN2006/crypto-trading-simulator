@@ -1,0 +1,31 @@
+# Dependencies
+node_modules
+.pnpm-store
+
+# Production Builds
+dist
+build
+
+# Database files (local runtime data)
+*_db.json
+*.sqlite
+*.db
+
+# Environment variables & local logs
+.env
+.env.local
+.env.*.local
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor & OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Vite & temp files
+.vite/
+.tmp/
