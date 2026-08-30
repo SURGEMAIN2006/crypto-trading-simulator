@@ -7,6 +7,7 @@ import Portfolio from './components/Portfolio';
 import BlockchainLedger from './components/BlockchainLedger';
 import DataScienceInference from './components/DataScienceInference';
 import TeamModal from './components/TeamModal';
+import AuthScreen from './components/AuthScreen';
 
 import { api } from './services/api';
 import { 
@@ -18,23 +19,51 @@ import {
 } from './services/cryptoEngine';
 
 export default function App() {
+  const [currentUser, setCurrentUser] = useState(() => {
+    try {
+      const saved = localStorage.getItem('cryptosim_user');
+      return saved ? JSON.parse(saved) : null;
+    } catch (e) {
+      return null;
+    }
+  });
+  const [isAuthenticated, setIsAuthenticated] = useState(() => !!currentUser);
+
   const [activeTab, setActiveTab] = useState('trade');
   const [cryptoAssets, setCryptoAssets] = useState(INITIAL_CRYPTO_ASSETS);
   const [selectedAsset, setSelectedAsset] = useState(INITIAL_CRYPTO_ASSETS[0]);
   const [chartData, setChartData] = useState(() => generateHistoryChartData(INITIAL_CRYPTO_ASSETS[0].price));
 
   // Wallet & Portfolio State
-  const [userBalance, setUserBalance] = useState(10000.00);
-  const [userHoldings, setUserHoldings] = useState({
-    BTC: 0.1,
-    ETH: 1.0,
-    SOL: 2.5
-  });
+  const [userBalance, setUserBalance] = useState(currentUser ? currentUser.usdtBalance || 10000.00 : 10000.00);
+  const [userHoldings, setUserHoldings] = useState(currentUser ? currentUser.holdings || { BTC: 0.1, ETH: 1.0, SOL: 2.5 } : { BTC: 0.1, ETH: 1.0, SOL: 2.5 });
 
   const [transactions, setTransactions] = useState(INITIAL_TRANSACTIONS);
   const [blocks, setBlocks] = useState(INITIAL_BLOCKS);
   const [isTeamModalOpen, setIsTeamModalOpen] = useState(false);
   const [gatewayStatus, setGatewayStatus] = useState('CHECKING');
+
+  // Login handler
+  const handleLoginSuccess = (user, token) => {
+    setCurrentUser(user);
+    setIsAuthenticated(true);
+    setUserBalance(user.usdtBalance || 10000.00);
+    if (user.holdings) setUserHoldings(user.holdings);
+    try {
+      localStorage.setItem('cryptosim_user', JSON.stringify(user));
+      if (token) localStorage.setItem('cryptosim_token', token);
+    } catch (e) {}
+  };
+
+  // Logout handler
+  const handleLogout = () => {
+    setCurrentUser(null);
+    setIsAuthenticated(false);
+    try {
+      localStorage.removeItem('cryptosim_user');
+      localStorage.removeItem('cryptosim_token');
+    } catch (e) {}
+  };
 
   // Check Microservices Gateway status on mount and poll every 10 seconds
   useEffect(() => {
@@ -153,7 +182,8 @@ export default function App() {
         side,
         type: order.type || 'MARKET',
         amount,
-        price
+        price,
+        userId: currentUser ? currentUser.id : 'u-101'
       });
 
       if (matchRes && matchRes.success) {
@@ -227,10 +257,15 @@ export default function App() {
     setUserHoldings({ BTC: 0.1, ETH: 1.0, SOL: 2.5 });
   };
 
+  // If user is not authenticated, show Sign In / Login Screen first!
+  if (!isAuthenticated) {
+    return <AuthScreen onLoginSuccess={handleLoginSuccess} />;
+  }
+
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       
-      {/* Header Bar with Gateway Connectivity */}
+      {/* Header Bar with Gateway Connectivity & User Profile */}
       <Navbar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
@@ -239,6 +274,8 @@ export default function App() {
         onResetPortfolio={handleResetPortfolio}
         onOpenTeamModal={() => setIsTeamModalOpen(true)}
         gatewayStatus={gatewayStatus}
+        currentUser={currentUser}
+        onLogout={handleLogout}
       />
 
       {/* Live Market Ticker Tape */}
@@ -291,7 +328,7 @@ export default function App() {
         )}
       </main>
 
-      {/* Team Details Modal */}
+      {/* System Architecture Specs Modal */}
       <TeamModal
         isOpen={isTeamModalOpen}
         onClose={() => setIsTeamModalOpen(false)}

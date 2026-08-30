@@ -6,7 +6,9 @@ import {
   Cpu, 
   BarChart2, 
   RefreshCw, 
-  Server
+  Server,
+  UserCheck,
+  LogOut
 } from 'lucide-react';
 
 export default function Navbar({ 
@@ -16,7 +18,9 @@ export default function Navbar({
   totalPortfolioValue,
   onResetPortfolio,
   onOpenTeamModal,
-  gatewayStatus = 'UP'
+  gatewayStatus = 'UP',
+  currentUser,
+  onLogout
 }) {
   const tabs = [
     { id: 'trade', label: 'Live Market & Trade', icon: TrendingUp },
@@ -88,8 +92,27 @@ export default function Navbar({
           })}
         </nav>
 
-        {/* Wallet & Gateway Status Badge */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        {/* User Profile, Wallet & Gateway Status Badge */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
+          
+          {/* User Badge */}
+          {currentUser && (
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.4rem',
+              background: '#131d31',
+              border: '1px solid rgba(0, 229, 255, 0.25)',
+              padding: '0.35rem 0.75rem',
+              borderRadius: 20
+            }}>
+              <UserCheck size={14} color="var(--accent-cyan)" />
+              <span style={{ fontSize: '0.78rem', fontWeight: 700, color: '#f8fafc' }}>
+                {currentUser.name || 'Trader'}
+              </span>
+            </div>
+          )}
+
           <div style={{ textAlign: 'right' }}>
             <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
               Testnet Balance
@@ -123,6 +146,19 @@ export default function Navbar({
               {isGatewayUp ? 'Microservices Connected' : 'SimNet Standalone'}
             </span>
           </div>
+
+          {/* Logout Button */}
+          {onLogout && (
+            <button
+              onClick={onLogout}
+              className="btn btn-secondary btn-sm"
+              style={{ padding: '0.35rem 0.6rem', color: 'var(--accent-red)', borderColor: 'rgba(255, 23, 68, 0.3)' }}
+              title="Log Out to Auth Screen"
+            >
+              <LogOut size={14} />
+            </button>
+          )}
+
         </div>
 
       </div>
