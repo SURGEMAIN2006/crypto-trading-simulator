@@ -17,17 +17,16 @@ export default function Navbar({
   portfolioBalance, 
   totalPortfolioValue,
   onResetPortfolio,
-  onOpenTeamModal,
   gatewayStatus = 'UP',
   currentUser,
   onLogout
 }) {
   const tabs = [
-    { id: 'trade', label: 'Live Market & Trade', icon: TrendingUp },
-    { id: 'portfolio', label: 'Portfolio & PnL', icon: Wallet },
-    { id: 'orderbook', label: 'Order Book Depth', icon: Layers },
-    { id: 'blockchain', label: 'Blockchain Ledger', icon: Cpu },
-    { id: 'analytics', label: 'Quantitative Analytics', icon: BarChart2 },
+    { id: 'trade', label: 'Trade', icon: TrendingUp },
+    { id: 'portfolio', label: 'Portfolio', icon: Wallet },
+    { id: 'orderbook', label: 'Order Book', icon: Layers },
+    { id: 'blockchain', label: 'Blockchain', icon: Cpu },
+    { id: 'analytics', label: 'Analytics', icon: BarChart2 },
   ];
 
   const isGatewayUp = gatewayStatus === 'UP' || gatewayStatus === 'HEALTHY';
@@ -36,7 +35,7 @@ export default function Navbar({
     <header className="glass-panel" style={{ borderRadius: 0, borderTop: 0, borderLeft: 0, borderRight: 0, padding: '0.8rem 1.5rem', position: 'sticky', top: 0, zIndex: 50 }}>
       <div style={{ maxWidth: 1600, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
         
-        {/* Brand & Platform Spec */}
+        {/* Simple Brand Header */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <div style={{ 
             width: 42, 
@@ -51,21 +50,13 @@ export default function Navbar({
             <Cpu size={24} color="#000" />
           </div>
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
-              <h1 style={{ fontSize: '1.25rem', fontWeight: 800, letterSpacing: '-0.5px' }}>
-                CRYPTO<span style={{ color: 'var(--accent-cyan)' }}>SIM</span>
-              </h1>
-              <span className="badge badge-purple" style={{ cursor: 'pointer' }} onClick={onOpenTeamModal}>
-                <Cpu size={12} /> System Specs
-              </span>
-            </div>
-            <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-              Enterprise Microservices Architecture • SHA-256 Blockchain & Analytics
-            </p>
+            <h1 style={{ fontSize: '1.25rem', fontWeight: 800, letterSpacing: '-0.5px' }}>
+              Crypto Trading Simulator
+            </h1>
           </div>
         </div>
 
-        {/* Navigation Tabs */}
+        {/* Clean Navigation Tabs */}
         <nav style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', background: 'rgba(0, 0, 0, 0.3)', padding: '0.3rem', borderRadius: 12, border: '1px solid var(--border-color)' }}>
           {tabs.map((tab) => {
             const Icon = tab.icon;
@@ -92,7 +83,7 @@ export default function Navbar({
           })}
         </nav>
 
-        {/* User Profile, Wallet & Gateway Status Badge */}
+        {/* User Profile, Wallet & Connection Status Badge */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
           
           {/* User Badge */}
@@ -115,7 +106,7 @@ export default function Navbar({
 
           <div style={{ textAlign: 'right' }}>
             <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-              Testnet Balance
+              Balance
             </div>
             <div className="mono" style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--accent-green)' }}>
               ${totalPortfolioValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
@@ -125,7 +116,7 @@ export default function Navbar({
           <button 
             className="btn btn-secondary btn-sm" 
             onClick={onResetPortfolio}
-            title="Reset Virtual Wallet to $10,000 USDT"
+            title="Reset Balance to $10,000 USDT"
           >
             <RefreshCw size={14} />
             Reset
@@ -143,7 +134,7 @@ export default function Navbar({
             <span style={{ width: 8, height: 8, borderRadius: '50%', background: isGatewayUp ? 'var(--accent-green)' : '#ffab00' }} className="pulse" />
             <Server size={12} color={isGatewayUp ? 'var(--accent-green)' : '#ffab00'} />
             <span style={{ fontSize: '0.75rem', fontWeight: 600, color: isGatewayUp ? 'var(--accent-green)' : '#ffab00' }}>
-              {isGatewayUp ? 'Microservices Connected' : 'SimNet Standalone'}
+              {isGatewayUp ? 'Connected' : 'Offline'}
             </span>
           </div>
 
@@ -153,7 +144,7 @@ export default function Navbar({
               onClick={onLogout}
               className="btn btn-secondary btn-sm"
               style={{ padding: '0.35rem 0.6rem', color: 'var(--accent-red)', borderColor: 'rgba(255, 23, 68, 0.3)' }}
-              title="Log Out to Auth Screen"
+              title="Log Out"
             >
               <LogOut size={14} />
             </button>

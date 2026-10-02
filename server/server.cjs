@@ -10,7 +10,7 @@ const DB_FILE = path.join(__dirname, 'database.json');
 // Initial persistent database structure
 const initialDb = {
   user: {
-    name: 'Group 1 Student Trader',
+    name: 'Trader',
     usdtBalance: 10000.00,
     initialBalance: 10000.00
   },
@@ -53,7 +53,7 @@ const initialDb = {
       hash: '0x8f3c7a91b2e45f61d803acdf4e569a12b7e8d90f1a2b3c4d5e6f7a8b9c0d1e2f',
       prevHash: '0x0000000000000000000000000000000000000000000000000000000000000000',
       transactionsCount: 1,
-      validator: 'Node-01 (Pritam - Team Lead)',
+      validator: 'Node-01',
       gasUsed: '1,420,500 Gwei',
       status: 'Confirmed'
     },
@@ -63,7 +63,7 @@ const initialDb = {
       hash: '0x3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b',
       prevHash: '0x8f3c7a91b2e45f61d803acdf4e569a12b7e8d90f1a2b3c4d5e6f7a8b9c0d1e2f',
       transactionsCount: 1,
-      validator: 'Node-02 (Shravani - Feeds Spec)',
+      validator: 'Node-02',
       gasUsed: '2,150,000 Gwei',
       status: 'Confirmed'
     }
@@ -279,7 +279,7 @@ const server = http.createServer((req, res) => {
           hash: blockHash,
           prevHash: prevBlock ? prevBlock.hash : '0x00000000000000000000000000000000',
           transactionsCount: 1,
-          validator: 'Node-01 (Group 1 Ledger Engine)',
+          validator: 'Node-01',
           gasUsed: `${Math.floor(Math.random() * 1500000 + 500000)} Gwei`,
           status: 'Confirmed'
         };

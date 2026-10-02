@@ -1,6 +1,6 @@
-# 🌐 Crypto Trading Simulator & SHA-256 Blockchain Ledger
+# Crypto Trading Simulator
 
-An enterprise-grade, multi-container microservices platform featuring real-time market data ingestion, quantitative analytics, price-time priority order matching, and immutable SHA-256 blockchain ledger block mining.
+Crypto trading simulator with market data, order matching, portfolio tracking, analytics, and a blockchain ledger.
 
 ---
 

@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
-import { Cpu, ShieldCheck, Key, Hash, FileCode, CheckCircle, Search, RefreshCw } from 'lucide-react';
+import { Cpu, Hash, FileCode, CheckCircle } from 'lucide-react';
 import { generateTxHash } from '../services/cryptoEngine';
 
 export default function BlockchainLedger({ blocks, transactions }) {
-  const [hashInput, setHashInput] = useState('CryptoSim Group 1 Transaction Ledger');
+  const [hashInput, setHashInput] = useState('Transaction Payload Data');
   const [computedHash, setComputedHash] = useState(() => generateTxHash());
   const [selectedBlock, setSelectedBlock] = useState(null);
 
   const handleComputeHash = (text) => {
     setHashInput(text);
-    // Simple deterministic hash simulation for live demo
     let hash = '0x';
     const chars = '0123456789abcdef';
     for (let i = 0; i < 64; i++) {
@@ -26,14 +25,13 @@ export default function BlockchainLedger({ blocks, transactions }) {
       <div className="glass-panel" style={{ padding: '1.5rem', background: 'linear-gradient(135deg, rgba(18, 24, 38, 0.9) 0%, rgba(10, 14, 23, 0.9) 100%)', border: '1px solid rgba(0, 229, 255, 0.2)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem', marginBottom: '1rem' }}>
           <Hash size={20} color="var(--accent-cyan)" />
-          <h2 style={{ fontSize: '1.2rem', fontWeight: 800 }}>SHA-256 Cryptographic Hash Tester</h2>
-          <span className="badge badge-gold">Blockchain Verification Engine (Vijaya Lead)</span>
+          <h2 style={{ fontSize: '1.2rem', fontWeight: 800 }}>Hash Preview</h2>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }}>
           <div>
             <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '0.4rem' }}>
-              Transaction Input String / Smart Contract Data Payload:
+              Input:
             </label>
             <textarea
               rows={3}
@@ -56,7 +54,7 @@ export default function BlockchainLedger({ blocks, transactions }) {
 
           <div>
             <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '0.4rem' }}>
-              Generated 256-bit Cryptographic Hash Output (Hexadecimal):
+              Hash Output:
             </label>
             <div className="mono" style={{ padding: '0.75rem', borderRadius: 8, background: 'rgba(0, 229, 255, 0.08)', border: '1px solid var(--border-glow)', color: 'var(--accent-cyan)', fontSize: '0.85rem', wordBreak: 'break-all', minHeight: '80px', display: 'flex', alignItems: 'center' }}>
               {computedHash}
@@ -70,10 +68,10 @@ export default function BlockchainLedger({ blocks, transactions }) {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem', marginBottom: '1rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
             <Cpu size={20} color="var(--accent-purple)" />
-            <h2 style={{ fontSize: '1.2rem', fontWeight: 800 }}>Simulated Blockchain Ledger & Mined Blocks</h2>
+            <h2 style={{ fontSize: '1.2rem', fontWeight: 800 }}>Blockchain Ledger & Mined Blocks</h2>
           </div>
           <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-            Consensus: Proof-of-Stake (Group 1 Validator Cluster)
+            Consensus: Proof-of-Stake
           </div>
         </div>
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Layers, Cpu, ShieldCheck, Database, Server, Activity } from 'lucide-react';
+import { X, Layers, Cpu, ShieldCheck, Server, Activity } from 'lucide-react';
 
 export default function TeamModal({ isOpen, onClose }) {
   if (!isOpen) return null;
@@ -70,14 +70,6 @@ export default function TeamModal({ isOpen, onClose }) {
           >
             <X size={24} />
           </button>
-        </div>
-
-        <div style={{ marginBottom: '1.25rem', background: 'rgba(0, 229, 255, 0.08)', padding: '0.9rem 1.1rem', borderRadius: 12, border: '1px solid rgba(0, 229, 255, 0.2)' }}>
-          <div style={{ fontSize: '0.75rem', color: 'var(--accent-cyan)', textTransform: 'uppercase', fontWeight: 700, letterSpacing: '0.5px' }}>Platform Specification</div>
-          <div style={{ fontSize: '1.15rem', fontWeight: 800, color: '#fff', marginTop: '0.2rem' }}>Crypto Trading Simulator & SHA-256 Blockchain Ledger</div>
-          <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.3rem', lineHeight: 1.4 }}>
-            Decoupled Microservices Platform with Database-per-Service architecture, Binance live price feeds, Quantitative Data Science indicators, Order Matching Engine, and SHA-256 Block Mining.
-          </div>
         </div>
 
         <h3 style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Microservices Component Stack</h3>

@@ -40,7 +40,7 @@ const INITIAL_BLOCKS = [
     hash: '0x8f3c7a91b2e45f61d803acdf4e569a12b7e8d90f1a2b3c4d5e6f7a8b9c0d1e2f',
     prevHash: '0x0000000000000000000000000000000000000000000000000000000000000000',
     transactionsCount: 14,
-    validator: 'Node-01 (Group 1 Ledger Engine)',
+    validator: 'Node-01',
     gasUsed: '1,420,500 Gwei',
     status: 'Confirmed'
   },
@@ -50,7 +50,7 @@ const INITIAL_BLOCKS = [
     hash: '0x4b3c2d1e0f9a8b7c6d5e4f3a2b1c0d9e8f7a6b5c4d3e2f1a0b9c8d7e6f5a4b3c',
     prevHash: '0x8f3c7a91b2e45f61d803acdf4e569a12b7e8d90f1a2b3c4d5e6f7a8b9c0d1e2f',
     transactionsCount: 22,
-    validator: 'Node-02 (Group 1 Validator Node)',
+    validator: 'Node-02',
     gasUsed: '2,150,000 Gwei',
     status: 'Confirmed'
   }

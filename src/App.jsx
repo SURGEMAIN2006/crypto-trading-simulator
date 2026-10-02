@@ -6,7 +6,6 @@ import OrderBook from './components/OrderBook';
 import Portfolio from './components/Portfolio';
 import BlockchainLedger from './components/BlockchainLedger';
 import DataScienceInference from './components/DataScienceInference';
-import TeamModal from './components/TeamModal';
 import AuthScreen from './components/AuthScreen';
 
 import { api } from './services/api';
@@ -40,7 +39,6 @@ export default function App() {
 
   const [transactions, setTransactions] = useState(INITIAL_TRANSACTIONS);
   const [blocks, setBlocks] = useState(INITIAL_BLOCKS);
-  const [isTeamModalOpen, setIsTeamModalOpen] = useState(false);
   const [gatewayStatus, setGatewayStatus] = useState('CHECKING');
 
   // Login handler
@@ -243,7 +241,7 @@ export default function App() {
         hash: generateTxHash(),
         prevHash: blocks.length > 0 ? blocks[blocks.length - 1].hash : '0x00000000000000000000000000000000',
         transactionsCount: Math.floor(Math.random() * 15 + 5),
-        validator: 'Node-01 (Primary Ledger Validator)',
+        validator: 'Node-01',
         gasUsed: `${Math.floor(Math.random() * 1000000 + 500000)} Gwei`,
         status: 'Confirmed'
       };
@@ -265,14 +263,13 @@ export default function App() {
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       
-      {/* Header Bar with Gateway Connectivity & User Profile */}
+      {/* Header Bar */}
       <Navbar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         portfolioBalance={userBalance}
         totalPortfolioValue={totalPortfolioValue}
         onResetPortfolio={handleResetPortfolio}
-        onOpenTeamModal={() => setIsTeamModalOpen(true)}
         gatewayStatus={gatewayStatus}
         currentUser={currentUser}
         onLogout={handleLogout}
@@ -328,16 +325,10 @@ export default function App() {
         )}
       </main>
 
-      {/* System Architecture Specs Modal */}
-      <TeamModal
-        isOpen={isTeamModalOpen}
-        onClose={() => setIsTeamModalOpen(false)}
-      />
-
       {/* Footer */}
       <footer style={{ borderTop: '1px solid var(--border-color)', padding: '1.25rem', textAlign: 'center', fontSize: '0.8rem', color: 'var(--text-muted)', background: 'rgba(0,0,0,0.4)', marginTop: '2rem' }}>
         <p>
-          Crypto Trading Simulator & SHA-256 Blockchain Ledger • Enterprise Microservices Platform
+          Crypto Trading Simulator
         </p>
       </footer>
 

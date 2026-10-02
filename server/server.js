@@ -10,7 +10,7 @@ const DB_FILE = path.join(__dirname, 'database.json');
 // Initial persistent database structure
 const initialDb = {
   user: {
-    name: 'Group 1 Student Trader',
+    name: 'Trader',
     usdtBalance: 10000.00,
     initialBalance: 10000.00
   },
@@ -53,7 +53,7 @@ const initialDb = {
       hash: '0x8f3c7a91b2e45f61d803acdf4e569a12b7e8d90f1a2b3c4d5e6f7a8b9c0d1e2f',
       prevHash: '0x0000000000000000000000000000000000000000000000000000000000000000',
       transactionsCount: 1,
-      validator: 'Node-01 (Pritam - Team Lead)',
+      validator: 'Node-01',
       gasUsed: '1,420,500 Gwei',
       status: 'Confirmed'
     },
@@ -63,7 +63,7 @@ const initialDb = {
       hash: '0x3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b',
       prevHash: '0x8f3c7a91b2e45f61d803acdf4e569a12b7e8d90f1a2b3c4d5e6f7a8b9c0d1e2f',
       transactionsCount: 1,
-      validator: 'Node-02 (Shravani - Feeds Spec)',
+      validator: 'Node-02',
       gasUsed: '2,150,000 Gwei',
       status: 'Confirmed'
     }
@@ -137,7 +137,6 @@ function updateLiveMarketPrices() {
           });
         }
       } catch (err) {
-        // Subtle tick drift fallback if API rate limited
         cachedPrices = cachedPrices.map(a => ({
           ...a,
           price: Number((a.price * (1 + (Math.random() - 0.49) * 0.005)).toFixed(a.price < 1 ? 4 : 2))
@@ -145,7 +144,6 @@ function updateLiveMarketPrices() {
       }
     });
   }).on('error', () => {
-    // Offline simulation drift
     cachedPrices = cachedPrices.map(a => ({
       ...a,
       price: Number((a.price * (1 + (Math.random() - 0.49) * 0.005)).toFixed(a.price < 1 ? 4 : 2))
@@ -153,13 +151,11 @@ function updateLiveMarketPrices() {
   });
 }
 
-// Poll Binance live prices every 5 seconds
 setInterval(updateLiveMarketPrices, 5000);
 updateLiveMarketPrices();
 
 // HTTP Router
 const server = http.createServer((req, res) => {
-  // Enable CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -255,7 +251,6 @@ const server = http.createServer((req, res) => {
           db.holdings[symbol] = Math.max(0, currentHolding - qty);
         }
 
-        // Generate SHA-256 Cryptographic TxHash
         const txPayload = `${side}:${symbol}:${qty}:${execPrice}:${Date.now()}`;
         const txHash = computeSHA256(txPayload);
 
@@ -274,7 +269,6 @@ const server = http.createServer((req, res) => {
 
         db.trades.unshift(newTrade);
 
-        // Auto-mine SHA-256 block for every trade
         const prevBlock = db.blocks[db.blocks.length - 1];
         const newBlockIndex = prevBlock ? prevBlock.blockIndex + 1 : 10000;
         const blockHash = computeSHA256(`${newBlockIndex}:${prevBlock ? prevBlock.hash : '0x0'}:${txHash}:${Date.now()}`);
@@ -285,7 +279,7 @@ const server = http.createServer((req, res) => {
           hash: blockHash,
           prevHash: prevBlock ? prevBlock.hash : '0x00000000000000000000000000000000',
           transactionsCount: 1,
-          validator: 'Node-01 (Group 1 Ledger Engine)',
+          validator: 'Node-01',
           gasUsed: `${Math.floor(Math.random() * 1500000 + 500000)} Gwei`,
           status: 'Confirmed'
         };
@@ -333,6 +327,16 @@ const server = http.createServer((req, res) => {
       }
     });
     return;
+  }
+
+  // Serve Application HTML if requesting root
+  if (pathname === '/' || pathname === '/index.html') {
+    const appPath = path.join(__dirname, '..', 'crypto-app.html');
+    if (fs.existsSync(appPath)) {
+      res.writeHead(200, { 'Content-Type': 'text/html' });
+      res.end(fs.readFileSync(appPath, 'utf-8'));
+      return;
+    }
   }
 
   // Fallback 404

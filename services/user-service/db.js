@@ -8,9 +8,9 @@ const INITIAL_DATA = {
   users: [
     {
       id: 'u-101',
-      email: 'student@group1.com',
-      name: 'Group 1 Student Trader',
-      passwordHash: crypto.createHash('sha256').update('password123:salt_group1').digest('hex'),
+      email: 'trader@cryptosim.io',
+      name: 'Trader',
+      passwordHash: crypto.createHash('sha256').update('password123:salt_cryptosim').digest('hex'),
       usdtBalance: 10000.00,
       initialBalance: 10000.00,
       holdings: { BTC: 0.1, ETH: 1.0, SOL: 2.5 },
@@ -65,12 +65,12 @@ class UserDatabase {
       throw new Error('User already exists');
     }
 
-    const salt = 'salt_group1';
+    const salt = 'salt_cryptosim';
     const passwordHash = crypto.createHash('sha256').update(`${password}:${salt}`).digest('hex');
     const newUser = {
       id: `u-${Date.now()}`,
       email,
-      name: name || 'Group 1 Trader',
+      name: name || 'Trader',
       passwordHash,
       usdtBalance: 10000.00,
       initialBalance: 10000.00,

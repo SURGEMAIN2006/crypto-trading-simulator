@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Crypto Trading Simulator | 4 Microservices & API Gateway App</title>
+  <title>Crypto Trading Simulator</title>
   
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -127,7 +127,7 @@
       // User Authentication State
       const [token, setToken] = useState(localStorage.getItem('jwt_token') || '');
       const [authModalOpen, setAuthModalOpen] = useState(!localStorage.getItem('jwt_token'));
-      const [email, setEmail] = useState('student@group1.com');
+      const [email, setEmail] = useState('');
       const [password, setPassword] = useState('password123');
 
       // Fetch Live Market Data via API Gateway (Microservice 2)
@@ -214,7 +214,7 @@
           const res = await fetch(`${API_GATEWAY}${endpoint}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password, name: 'Group 1 Student' })
+            body: JSON.stringify({ email, password, name: 'Trader' })
           });
           const data = await res.json();
           if (data.success && data.token) {
@@ -292,7 +292,7 @@
               </div>
               <div>
                 <h1 style={{ fontSize: '1.25rem', fontWeight: 800 }}>CRYPTO<span style={{ color: 'var(--accent-cyan)' }}>SIM</span></h1>
-                <span className="badge badge-purple">4 Microservices Architecture (Ports 3000-3005)</span>
+                <span className="badge badge-purple">Crypto Trading Simulator</span>
               </div>
             </div>
 

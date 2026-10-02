@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Crypto Trading Simulator & Blockchain Ledger | Group 1 Project</title>
+  <title>Crypto Trading Simulator</title>
   
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -165,7 +165,7 @@
       ]);
 
       const [blocks, setBlocks] = useState([
-        { index: 104289, timestamp: '14:00:00', hash: generateHash(), validator: 'Node-01 (Pritam Lead)', txs: 14 }
+        { index: 104289, timestamp: '14:00:00', hash: generateHash(), validator: 'Node-01', txs: 14 }
       ]);
 
       // Ticker interval
@@ -211,7 +211,7 @@
         setTransactions(t => [newTx, ...t]);
 
         setBlocks(b => [
-          { index: b[0].index + 1, timestamp: new Date().toLocaleTimeString(), hash: generateHash(), validator: 'Node-01 (Group 1)', txs: Math.floor(Math.random() * 10 + 1) },
+          { index: b[0].index + 1, timestamp: new Date().toLocaleTimeString(), hash: generateHash(), validator: 'Node-01', txs: Math.floor(Math.random() * 10 + 1) },
           ...b
         ]);
 
@@ -228,12 +228,8 @@
           {/* Header */}
           <header className="glass-panel" style={{ borderRadius: 0, padding: '0.8rem 1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
-              <div style={{ width: 38, height: 38, borderRadius: 10, background: 'linear-gradient(135deg, #00e5ff 0%, #a855f7 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 900, color: '#000' }}>
-                CS
-              </div>
               <div>
-                <h1 style={{ fontSize: '1.2rem', fontWeight: 800 }}>CRYPTO<span style={{ color: 'var(--accent-cyan)' }}>SIM</span></h1>
-                <span className="badge badge-purple">Group 1 Project (Pritam, Shravani, Vishakha, Vijaya)</span>
+                <h1 style={{ fontSize: '1.2rem', fontWeight: 800 }}>Crypto Trading Simulator</h1>
               </div>
             </div>
 
@@ -255,7 +251,7 @@
             </nav>
 
             <div style={{ textAlign: 'right' }}>
-              <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>TESTNET BALANCE</div>
+              <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>BALANCE</div>
               <div className="mono" style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--accent-green)' }}>
                 ${totalVal.toLocaleString('en-US', { minimumFractionDigits: 2 })}
               </div>
@@ -341,7 +337,7 @@
 
             {activeTab === 'portfolio' && (
               <div className="glass-panel" style={{ padding: '1.5rem' }}>
-                <h2>User Portfolio & Net Worth</h2>
+                <h2>User Portfolio</h2>
                 <p style={{ marginTop: '0.5rem', color: 'var(--text-secondary)' }}>Liquid Cash: ${userBalance.toFixed(2)} USDT</p>
                 <div style={{ marginTop: '1.5rem' }}>
                   <h3>Active Holdings</h3>
@@ -357,7 +353,7 @@
 
             {activeTab === 'orderbook' && (
               <div className="glass-panel" style={{ padding: '1.5rem' }}>
-                <h2>Order Book Depth Walls (Bids & Asks)</h2>
+                <h2>Order Book (Bids & Asks)</h2>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', marginTop: '1rem' }}>
                   <div>
                     <h3 style={{ color: 'var(--accent-red)' }}>ASKS (Sellers)</h3>
@@ -379,7 +375,7 @@
 
             {activeTab === 'blockchain' && (
               <div className="glass-panel" style={{ padding: '1.5rem' }}>
-                <h2>Simulated Blockchain Ledger</h2>
+                <h2>Blockchain Ledger</h2>
                 <div style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
                   {blocks.map(b => (
                     <div key={b.index} style={{ background: 'rgba(0,0,0,0.4)', padding: '0.8rem', borderRadius: 8, border: '1px solid var(--border-color)' }}>
@@ -393,21 +389,10 @@
 
             {activeTab === 'analytics' && (
               <div className="glass-panel" style={{ padding: '1.5rem' }}>
-                <h2>Data Science & Survey Paper Phase</h2>
+                <h2>Analytics</h2>
                 <p style={{ marginTop: '0.5rem', color: 'var(--text-secondary)' }}>
-                  Survey report text ready for submission. Group 1: Pritam Acharekar, Shravani Bandekar, Vishakha Bankar, Vijaya Ingale.
+                  Market Sentiment Index: 74 (Greed)
                 </p>
-                <textarea
-                  readOnly
-                  rows={8}
-                  style={{ width: '100%', marginTop: '1rem', background: '#000', color: 'var(--text-secondary)', padding: '1rem', borderRadius: 8 }}
-                  value={`SURVEY PAPER REPORT: CRYPTO TRADING SIMULATOR
-Group 1 Members: Pritam Acharekar, Shravani Bandekar, Vishakha Bankar, Vijaya Ingale
-
-1. Ingestion: Streaming real-time ticks for BTC/ETH/SOL.
-2. Analytics: Fear & Greed index calculated at 74 (Greed).
-3. Hashing: SHA-256 block ledger hashing verified.`}
-                />
               </div>
             )}
           </main>

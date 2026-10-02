@@ -4,8 +4,8 @@ import { api } from '../services/api';
 
 export default function AuthScreen({ onLoginSuccess }) {
   const [mode, setMode] = useState('login'); // 'login' or 'register'
-  const [email, setEmail] = useState('trader@cryptosim.io');
-  const [password, setPassword] = useState('password123');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -26,18 +26,18 @@ export default function AuthScreen({ onLoginSuccess }) {
             onLoginSuccess(res.user, res.token);
           }, 600);
         } else {
-          // Fallback demo login if gateway/service offline
+          // Fallback user login if gateway offline
           const fallbackUser = {
             id: 'u-101',
-            email: email || 'trader@cryptosim.io',
-            name: name || 'Demo Trader',
+            email: email || 'user@example.com',
+            name: name || 'Trader',
             usdtBalance: 10000.00,
             holdings: { BTC: 0.1, ETH: 1.0, SOL: 2.5 }
           };
-          onLoginSuccess(fallbackUser, 'demo_token_123');
+          onLoginSuccess(fallbackUser, 'auth_token_123');
         }
       } else {
-        const res = await api.register(email, password, name || 'Demo Trader');
+        const res = await api.register(email, password, name || 'Trader');
         if (res && res.success && res.user) {
           setSuccessMsg(`Account created! Welcome, ${res.user.name}!`);
           setTimeout(() => {
@@ -47,12 +47,12 @@ export default function AuthScreen({ onLoginSuccess }) {
           // Fallback registration
           const newUser = {
             id: `u-${Date.now()}`,
-            email: email || 'trader@cryptosim.io',
+            email: email || 'user@example.com',
             name: name || 'Trader',
             usdtBalance: 10000.00,
             holdings: { BTC: 0.1, ETH: 1.0 }
           };
-          onLoginSuccess(newUser, 'demo_token_new');
+          onLoginSuccess(newUser, 'auth_token_new');
         }
       }
     } catch (err) {
@@ -97,11 +97,8 @@ export default function AuthScreen({ onLoginSuccess }) {
             <Cpu size={30} color="#000" />
           </div>
           <h1 style={{ fontSize: '1.75rem', fontWeight: 800, letterSpacing: '-0.5px', color: '#f8fafc' }}>
-            CRYPTO<span style={{ color: 'var(--accent-cyan)' }}>SIM</span>
+            Crypto Trading Simulator
           </h1>
-          <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.3rem' }}>
-            User & Auth Microservice • JWT Secured Access
-          </p>
         </div>
 
         {/* Tab Switcher (Sign In vs Register) */}
@@ -200,7 +197,7 @@ export default function AuthScreen({ onLoginSuccess }) {
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Institutional Trader"
+                  placeholder="Full Name"
                   value={name}
                   onChange={e => setName(e.target.value)}
                   style={{
@@ -227,7 +224,7 @@ export default function AuthScreen({ onLoginSuccess }) {
               <input
                 type="email"
                 required
-                placeholder="trader@cryptosim.io"
+                placeholder="email@example.com"
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 style={{
@@ -277,7 +274,7 @@ export default function AuthScreen({ onLoginSuccess }) {
             className="btn btn-primary"
             style={{ width: '100%', padding: '0.8rem', fontSize: '0.95rem', marginTop: '0.4rem' }}
           >
-            {loading ? 'Authenticating...' : (mode === 'login' ? 'Sign In to Simulator' : 'Create Account & Start')}
+            {loading ? 'Authenticating...' : (mode === 'login' ? 'Sign In' : 'Create Account')}
             <ArrowRight size={18} />
           </button>
         </form>

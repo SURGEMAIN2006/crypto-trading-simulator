@@ -124,7 +124,7 @@ export default function Portfolio({
             <div style={{ padding: '3rem 1rem', textAlign: 'center', color: 'var(--text-muted)' }}>
               <PieChart size={48} style={{ opacity: 0.3, marginBottom: '0.5rem' }} />
               <p>No active crypto holdings in your portfolio.</p>
-              <p style={{ fontSize: '0.8rem', marginTop: '0.3rem' }}>Switch to the <strong>Live Market & Trade</strong> tab to execute your first order!</p>
+              <p style={{ fontSize: '0.8rem', marginTop: '0.3rem' }}>Switch to the <strong>Trade</strong> tab to execute your first order!</p>
             </div>
           ) : (
             <div style={{ overflowX: 'auto' }}>

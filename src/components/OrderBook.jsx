@@ -42,13 +42,13 @@ export default function OrderBook({ selectedAsset }) {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.75rem' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
             <Layers size={20} color="var(--accent-cyan)" />
-            <h2 style={{ fontSize: '1.2rem', fontWeight: 800 }}>Order Book & Matching Depth</h2>
+            <h2 style={{ fontSize: '1.2rem', fontWeight: 800 }}>Order Book</h2>
             <span className="badge badge-purple">{selectedAsset.symbol}/USDT</span>
           </div>
 
           <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
             <ShieldCheck size={14} color="var(--accent-green)" />
-            <span>Matching Engine: Active (Vishakha Lead)</span>
+            <span>Matching Engine: Active</span>
           </div>
         </div>
 

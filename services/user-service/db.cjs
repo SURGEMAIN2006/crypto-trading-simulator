@@ -9,7 +9,7 @@ const INITIAL_DATA = {
     {
       id: 'u-101',
       email: 'trader@cryptosim.io',
-      name: 'Institutional Demo Trader',
+      name: 'Trader',
       passwordHash: crypto.createHash('sha256').update('password123:salt_cryptosim').digest('hex'),
       usdtBalance: 10000.00,
       initialBalance: 10000.00,
@@ -70,7 +70,7 @@ class UserDatabase {
     const newUser = {
       id: `u-${Date.now()}`,
       email,
-      name: name || 'Demo Trader',
+      name: name || 'Trader',
       passwordHash,
       usdtBalance: 10000.00,
       initialBalance: 10000.00,

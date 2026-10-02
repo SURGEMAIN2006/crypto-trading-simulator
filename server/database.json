@@ -1,28 +1,16 @@
 {
   "user": {
-    "name": "Group 1 Student Trader",
-    "usdtBalance": 3622.4287999999997,
+    "name": "Trader",
+    "usdtBalance": 10000,
     "initialBalance": 10000
   },
   "holdings": {
-    "BTC": 0.2,
+    "BTC": 0.1,
     "ETH": 1,
     "SOL": 2.5
   },
   "orders": [],
   "trades": [
-    {
-      "id": "tx-1786629585474",
-      "symbol": "BTC",
-      "side": "BUY",
-      "amount": 0.1,
-      "price": 63712,
-      "totalUSD": 6371.200000000001,
-      "fee": 6.371200000000001,
-      "timestamp": "2026-08-13T13:59:45.474Z",
-      "txHash": "0xaa6250ed6b5d8a4533cd9b5304a82822cd37e7cfe32e7c82f987b571e1baeecc",
-      "status": "CONFIRMED"
-    },
     {
       "id": "tx-1001",
       "symbol": "BTC",
@@ -31,7 +19,7 @@
       "price": 65200,
       "totalUSD": 6520,
       "fee": 6.52,
-      "timestamp": "2026-08-13T11:27:09.748Z",
+      "timestamp": "2026-08-29T12:00:00.000Z",
       "txHash": "0x8f3c7a91b2e45f61d803acdf4e569a12b7e8d90f1a2b3c4d5e6f7a8b9c0d1e2f",
       "status": "CONFIRMED"
     },
@@ -43,7 +31,7 @@
       "price": 3450,
       "totalUSD": 3450,
       "fee": 3.45,
-      "timestamp": "2026-08-13T12:27:09.748Z",
+      "timestamp": "2026-08-29T13:00:00.000Z",
       "txHash": "0x3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b",
       "status": "CONFIRMED"
     }
@@ -51,32 +39,22 @@
   "blocks": [
     {
       "blockIndex": 104289,
-      "timestamp": "2026-08-13T11:27:09.748Z",
+      "timestamp": "2026-08-29T12:00:00.000Z",
       "hash": "0x8f3c7a91b2e45f61d803acdf4e569a12b7e8d90f1a2b3c4d5e6f7a8b9c0d1e2f",
       "prevHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
       "transactionsCount": 1,
-      "validator": "Node-01 (Pritam - Team Lead)",
+      "validator": "Node-01",
       "gasUsed": "1,420,500 Gwei",
       "status": "Confirmed"
     },
     {
       "blockIndex": 104290,
-      "timestamp": "2026-08-13T12:27:09.748Z",
+      "timestamp": "2026-08-29T13:00:00.000Z",
       "hash": "0x3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b",
       "prevHash": "0x8f3c7a91b2e45f61d803acdf4e569a12b7e8d90f1a2b3c4d5e6f7a8b9c0d1e2f",
       "transactionsCount": 1,
-      "validator": "Node-02 (Shravani - Feeds Spec)",
+      "validator": "Node-02",
       "gasUsed": "2,150,000 Gwei",
-      "status": "Confirmed"
-    },
-    {
-      "blockIndex": 104291,
-      "timestamp": "2026-08-13T13:59:45.474Z",
-      "hash": "0x8ee295bd9f2042c7f0fef0ab0700f06a40019cee44cb0fe895c3c8ac2854a920",
-      "prevHash": "0x3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d5e6f7a8b9c0d1e2f3a4b",
-      "transactionsCount": 1,
-      "validator": "Node-01 (Group 1 Ledger Engine)",
-      "gasUsed": "888222 Gwei",
       "status": "Confirmed"
     }
   ]

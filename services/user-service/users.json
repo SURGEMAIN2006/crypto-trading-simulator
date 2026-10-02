@@ -2,27 +2,17 @@
   "users": [
     {
       "id": "u-101",
-      "email": "student@group1.com",
-      "name": "Group 1 Student Trader",
-      "passwordHash": "126aee8f817e5317abdc2ec7665d817b4e632c811c3568c24d9fc7596f56fad0",
+      "email": "trader@cryptosim.io",
+      "name": "Trader",
+      "passwordHash": "8f3c7a91b2e45f61d803acdf4e569a12b7e8d90f1a2b3c4d5e6f7a8b9c0d1e2f",
       "usdtBalance": 10000,
       "initialBalance": 10000,
       "holdings": {
         "BTC": 0.1,
         "ETH": 1,
         "SOL": 2.5
-      }
-    },
-    {
-      "id": "u-1786630667920",
-      "email": "vadapav@Gmail.com",
-      "name": "Group 1 Student",
-      "passwordHash": "126aee8f817e5317abdc2ec7665d817b4e632c811c3568c24d9fc7596f56fad0",
-      "usdtBalance": 10000,
-      "initialBalance": 10000,
-      "holdings": {
-        "BTC": 0.1
-      }
+      },
+      "createdAt": "2026-08-29T12:00:00.000Z"
     }
   ]
 }
