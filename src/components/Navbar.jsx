@@ -6,7 +6,6 @@ import {
   Cpu, 
   BarChart2, 
   RefreshCw, 
-  Server,
   UserCheck,
   LogOut
 } from 'lucide-react';
@@ -17,7 +16,6 @@ export default function Navbar({
   portfolioBalance, 
   totalPortfolioValue,
   onResetPortfolio,
-  gatewayStatus = 'UP',
   currentUser,
   onLogout
 }) {
@@ -28,9 +26,6 @@ export default function Navbar({
     { id: 'blockchain', label: 'Blockchain', icon: Cpu },
     { id: 'analytics', label: 'Analytics', icon: BarChart2 },
   ];
-
-  const isGatewayUp = gatewayStatus === 'UP' || gatewayStatus === 'HEALTHY';
-
   return (
     <header className="glass-panel" style={{ borderRadius: 0, borderTop: 0, borderLeft: 0, borderRight: 0, padding: '0.8rem 1.5rem', position: 'sticky', top: 0, zIndex: 50 }}>
       <div style={{ maxWidth: 1600, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
@@ -83,7 +78,7 @@ export default function Navbar({
           })}
         </nav>
 
-        {/* User Profile, Wallet & Connection Status Badge */}
+        {/* User Profile & Wallet */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
           
           {/* User Badge */}
@@ -121,24 +116,7 @@ export default function Navbar({
             <RefreshCw size={14} />
             Reset
           </button>
-
-          <div style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '0.4rem', 
-            background: isGatewayUp ? 'rgba(0, 230, 118, 0.1)' : 'rgba(255, 171, 0, 0.1)', 
-            padding: '0.4rem 0.8rem', 
-            borderRadius: 20, 
-            border: `1px solid ${isGatewayUp ? 'rgba(0,230,118,0.3)' : 'rgba(255,171,0,0.3)'}` 
-          }}>
-            <span style={{ width: 8, height: 8, borderRadius: '50%', background: isGatewayUp ? 'var(--accent-green)' : '#ffab00' }} className="pulse" />
-            <Server size={12} color={isGatewayUp ? 'var(--accent-green)' : '#ffab00'} />
-            <span style={{ fontSize: '0.75rem', fontWeight: 600, color: isGatewayUp ? 'var(--accent-green)' : '#ffab00' }}>
-              {isGatewayUp ? 'Connected' : 'Offline'}
-            </span>
-          </div>
-
-          {/* Logout Button */}
+{/* Logout Button */}
           {onLogout && (
             <button
               onClick={onLogout}
